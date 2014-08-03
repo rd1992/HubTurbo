@@ -47,7 +47,8 @@ public class IssueDetailsDisplay extends VBox {
 	private void setupDetailsTab(){
 		this.detailsTab = new TabPane();
 		Tab commentsTab = createCommentsTab();
-		detailsTab.getTabs().add(commentsTab);
+		Tab webView = createGithubViewTab();
+		detailsTab.getTabs().addAll(commentsTab, webView);
 	}
 	
 	private void setupDisplay(){
@@ -168,4 +169,13 @@ public class IssueDetailsDisplay extends VBox {
 		return comments;
 	}
 	
+	private Tab createGithubViewTab(){
+		Tab tab = new Tab();
+		tab.setText("WebView");
+		tab.setClosable(false);
+		VBox contents = new GithubCommentsDisplay(issue.getId());
+		tab.setContent(contents);
+		VBox.setVgrow(contents, Priority.ALWAYS);
+		return tab;
+	}
 }
