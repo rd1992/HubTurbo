@@ -46,7 +46,7 @@ public class GithubCommentsDisplay extends VBox{
 		WeakReference<WebView> ref = new WeakReference<>(display);
 		listener = (ov, oldState, newState)->{
 			if(newState == State.SUCCEEDED){
-				System.out.println(ref.get().getEngine().executeScript(JS_SCRIPT));
+				ref.get().getEngine().executeScript(JS_SCRIPT);
 			}
 		};
 		display.getEngine().getLoadWorker().stateProperty().addListener(listener);

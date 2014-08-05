@@ -4,8 +4,17 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.Authenticator;
+import java.net.CookieHandler;
 import java.net.HttpURLConnection;
+import java.net.PasswordAuthentication;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.lang.reflect.Type;
 
 import org.eclipse.egit.github.core.client.GitHubClient;
@@ -13,9 +22,26 @@ import org.eclipse.egit.github.core.client.GitHubRequest;
 
 public class GitHubClientExtended extends GitHubClient{
 	public static final int NO_UPDATE_RESPONSE_CODE = 304;
+	public static final String GITHUB_URL = "https://github.com/";
 	
 	public GitHubClientExtended(){
 		
+	}
+	
+	@Override
+	public GitHubClient setCredentials(String username, String password){
+		setAuthentication(username, password);
+		return super.setCredentials(username, password);
+	}
+	
+	private void setAuthentication(String userId, String password){
+		PasswordAuthentication auth = new PasswordAuthentication(userId, password.toCharArray());
+		Authenticator.setDefault(new Authenticator(){
+			@Override
+			protected PasswordAuthentication getPasswordAuthentication(){
+				return auth;
+			}
+		});
 	}
 	
 	public HttpURLConnection createConnection(GitHubRequest request) throws IOException{
@@ -25,7 +51,7 @@ public class GitHubClientExtended extends GitHubClient{
 	
 	public HttpURLConnection createGitHubConnection(String path, String method)
 			throws IOException {
-		URL url = new URL("https://github.com/" + path);
+		URL url = new URL(GITHUB_URL + path);
 		HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 		connection.setRequestMethod(method);
 		return configureRequest(connection);
